@@ -102,7 +102,6 @@ public class StartWindow extends HBox {
 
     private void removeButtonAction(String textType, String addedText, ObservableList<String> listItems, ListView<String> displayList) {
         listItems.remove(addedText);
-        displayList.setItems(listItems);
         game.removeItem(addedText, textType);
     }
 
@@ -115,6 +114,6 @@ public class StartWindow extends HBox {
     }
 
     private void startButtonAction() {
-        StageController.getStage().setScene(new Scene(new GameWindow()));
+        StageController.getStage().setScene(new Scene(new GameWindow(getWidth(), getHeight(), game), getWidth(), getHeight()));
     }
 }

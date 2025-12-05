@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.4">
   <diagram name="Sida-1" id="2EPV8611yyqGXSqlG70w">
-    <mxGraphModel dx="448" dy="649" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="653" dy="947" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -174,7 +174,7 @@
         <mxCell id="tuDPcH6wda9qsnauvGhQ-16" parent="1" style="triangle;whiteSpace=wrap;html=1;rotation=90;" value="" vertex="1">
           <mxGeometry height="10" width="8" x="586" y="545" as="geometry" />
         </mxCell>
-        <mxCell id="tuDPcH6wda9qsnauvGhQ-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Gissa" vertex="1">
+        <mxCell id="tuDPcH6wda9qsnauvGhQ-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Gissar" vertex="1">
           <mxGeometry height="17" width="59" x="603" y="540" as="geometry" />
         </mxCell>
         <mxCell id="tuDPcH6wda9qsnauvGhQ-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Vet" vertex="1">

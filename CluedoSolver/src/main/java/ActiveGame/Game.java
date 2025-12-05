@@ -8,6 +8,12 @@ public class Game {
     ArrayList<String> rooms = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
 
+    private Player selectedPlayerAsk;
+    private Player selectedPlayerAnswer;
+    private String selectedCharacter;
+    private String selectedRoom;
+    private String selectedWeapon;
+
     public Game() {
 
     }
@@ -27,7 +33,7 @@ public class Game {
                     break;
 
                 case "Players":
-                    //TEMP NEEDS FIXING
+                    players.add(new Player(item));
                     break;
         }
     }
@@ -47,8 +53,64 @@ public class Game {
                 break;
 
             case "Players":
-                //TEMP NEEDS FIXING
+                players.removeIf(player -> player.getName().equals("item"));
                 break;
         }
+    }
+
+    public void selectItem(String item, String type) {
+        switch (type) {
+            case "Weapon":
+                selectedWeapon = item;
+                break;
+
+            case "Character":
+                selectedCharacter = item;
+                break;
+
+            case "Room":
+                selectedRoom = item;
+                break;
+
+            case "PlayersAsk":
+                for (Player player : players) {
+                    if (player.getName().equals(item)) {
+                        selectedPlayerAsk = player;
+                    }
+                }
+                break;
+
+            case "PlayersAnswer":
+                for (Player player : players) {
+                    if (player.getName().equals(item)) {
+                        selectedPlayerAnswer = player;
+                    }
+                }
+                break;
+        }
+    }
+
+    public ArrayList<String> getCharacters() {
+        return characters;
+    }
+
+    public ArrayList<String> getWeapons() {
+        return weapons;
+    }
+
+    public ArrayList<String> getRooms() {
+        return rooms;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getSelectedPlayerAsk() {
+        return selectedPlayerAsk;
+    }
+
+    public Player getSelectedPlayerAnswer() {
+        return selectedPlayerAnswer;
     }
 }
