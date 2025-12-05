@@ -13,4 +13,6 @@ module cluedo.solver.cluedosolver {
     exports cluedo.solver.cluedosolver;
     exports ActiveGame;
     opens ActiveGame to javafx.fxml;
+    exports Scenes;
+    opens Scenes to javafx.fxml;
 }

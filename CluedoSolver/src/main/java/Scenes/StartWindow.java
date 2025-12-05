@@ -1,13 +1,14 @@
-package cluedo.solver.cluedosolver;
+package Scenes;
 
 import ActiveGame.Game;
+import cluedo.solver.cluedosolver.StageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -64,17 +65,31 @@ public class StartWindow extends HBox {
 
         inputBox.getChildren().addAll(addedText, addButton, selectedItems, removeButton);
 
+        //If it's the last row we want to add more buttons. Should probably be its own VBox...
         if (textType.equals("Players")) {
             HBox loadAndSave = new HBox();
             loadAndSave.setSpacing(5);
-            Button load = new Button("Load");
-            Button save = new Button("Save");
-            loadAndSave.getChildren().addAll(load, save);
-            inputBox.getChildren().add(loadAndSave); //Place into addAll later...
 
+            Button loadButton = new Button("Load");
+            loadButton.setOnAction((event) -> {
+                loadButtonAction();
+            });
+            loadButton.setDisable(true); //REMOVE WHEN FEATURE WORKING
+
+            Button saveButton = new Button("Save");
+            saveButton.setOnAction((event) -> {
+                saveButtonAction();
+            });
+            saveButton.setDisable(true); //REMOVE WHEN FEATURE IS WORKING
+
+            loadAndSave.getChildren().addAll(loadButton, saveButton);
 
             Button startButton = new Button("start");
+            startButton.setOnAction((event) -> {
+                startButtonAction();
+            });
 
+            inputBox.getChildren().add(loadAndSave); //Make this into a addAll
             inputBox.getChildren().add(startButton);
         }
     }
@@ -89,5 +104,17 @@ public class StartWindow extends HBox {
         listItems.remove(addedText);
         displayList.setItems(listItems);
         game.removeItem(addedText, textType);
+    }
+
+    private void saveButtonAction() {
+
+    }
+
+    private void loadButtonAction() {
+
+    }
+
+    private void startButtonAction() {
+        StageController.getStage().setScene(new Scene(new GameWindow()));
     }
 }
