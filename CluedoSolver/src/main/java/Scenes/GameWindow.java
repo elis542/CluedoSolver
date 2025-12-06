@@ -26,7 +26,41 @@ public class GameWindow extends VBox {
 
     private void initializeWindow() {
         VBox playerAskAndAnswer = createPlayerAskAndAnswer();
-        getChildren().add(playerAskAndAnswer);
+        HBox murderToolSelect = createMurderToolSelect();
+        HBox topOfMenu = new HBox(playerAskAndAnswer, murderToolSelect);
+        topOfMenu.setSpacing(65);
+
+        getChildren().add(topOfMenu);
+    }
+
+    private HBox createMurderToolSelect() {
+        MenuButton weaponButton = new MenuButton("Weapon");
+        MenuButton characterButton = new MenuButton("Character");
+        MenuButton roomButton = new MenuButton("Room");
+
+        setButtonWidth(weaponButton, 100);
+        setButtonWidth(characterButton, 100);
+        setButtonWidth(roomButton, 100);
+
+        murderToolButtonBuilder(weaponButton, game.getWeapons(), "Weapon");
+        murderToolButtonBuilder(characterButton, game.getCharacters(), "Character");
+        murderToolButtonBuilder(roomButton, game.getRooms(), "Room");
+
+        HBox returnBox = new HBox(weaponButton, characterButton, roomButton);
+        returnBox.setSpacing(35);
+        return returnBox;
+    }
+
+    //fills the MenuButtons with relevant choices
+    private void murderToolButtonBuilder(MenuButton button, ArrayList<String> list, String type) {
+        for (String tool : list) {
+            MenuItem item = new MenuItem(tool);
+            item.setOnAction((event) -> {
+                button.setText(tool);
+                game.selectItem(tool, type);
+            });
+            button.getItems().add(item);
+        }
     }
 
     private VBox createPlayerAskAndAnswer() {
@@ -37,11 +71,11 @@ public class GameWindow extends VBox {
         Text answerText = new Text("Answers");
 
         MenuButton askButton = new MenuButton("Asks");
-        askButton.setMinWidth(55);
+        setButtonWidth(askButton, 100);
         MenuButton answerButton = new MenuButton("Answers");
-        answerButton.setMinWidth(55);
+        setButtonWidth(answerButton, 100);
 
-        //Creates the dropdown menus
+        //Creates the dropdown menus, I have to make 2 lists because they have different setOnAction functions
         ArrayList<MenuItem> allButtonsAsk = new ArrayList<>();
         ArrayList<MenuItem> allButtonsAnswer = new ArrayList<>();
 
@@ -50,17 +84,25 @@ public class GameWindow extends VBox {
             allButtonsAsk.add(item);
             askButtonListBuilder(players, askButton, allButtonsAsk);
             item.setOnAction((e) -> {
-                askButtonAction(player, askButton);
+                askButtonAction(player.getName(), askButton);
                 answerButtonListBuilder(players, answerButton, allButtonsAnswer);
             });
         }
+
+        //Adding this item in the case that noone has the cards asked for
+        MenuItem noAnswer = new MenuItem("----");
+        noAnswer.setOnAction((event) -> {
+            answerButtonAction("---", answerButton);
+            askButtonListBuilder(players, askButton, allButtonsAsk);
+        });
+        allButtonsAnswer.add(noAnswer);
 
         for (Player player : players) {
             MenuItem item = new MenuItem(player.getName());
             allButtonsAnswer.add(item);
             answerButtonListBuilder(players, answerButton, allButtonsAnswer);
             item.setOnAction((e) -> {
-                answerButtonAction(player, answerButton);
+                answerButtonAction(player.getName(), answerButton);
                 askButtonListBuilder(players, askButton, allButtonsAsk);
             });
         }
@@ -87,13 +129,18 @@ public class GameWindow extends VBox {
         }
     }
 
-    private void askButtonAction(Player player, MenuButton button) {
-        button.setText(player.getName());
-        game.selectItem(player.getName(), "PlayersAsk");
+    private void askButtonAction(String player, MenuButton button) {
+        button.setText(player);
+        game.selectItem(player, "PlayersAsk");
     }
 
-    private void answerButtonAction(Player player, MenuButton button) {
-        button.setText(player.getName());
-        game.selectItem(player.getName(), "PlayersAnswer");
+    private void answerButtonAction(String player, MenuButton button) {
+        button.setText(player);
+        game.selectItem(player, "PlayersAnswer");
+    }
+
+    private void setButtonWidth(MenuButton button, double size) {
+        button.setMaxWidth(size);
+        button.setMinWidth(size);
     }
 }

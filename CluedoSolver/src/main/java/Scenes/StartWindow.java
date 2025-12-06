@@ -27,10 +27,10 @@ public class StartWindow extends HBox {
         vBoxInitializer("Weapon", weaponVBox);
 
         VBox characterVBox = new VBox();
-        vBoxInitializer("Characters", characterVBox);
+        vBoxInitializer("Character", characterVBox);
 
         VBox roomVBox = new VBox();
-        vBoxInitializer("Rooms", roomVBox);
+        vBoxInitializer("Room", roomVBox);
 
         VBox playerVBox = new VBox();
         vBoxInitializer("Players", playerVBox);
@@ -102,6 +102,7 @@ public class StartWindow extends HBox {
 
     private void removeButtonAction(String textType, String addedText, ObservableList<String> listItems, ListView<String> displayList) {
         listItems.remove(addedText);
+        displayList.setItems(listItems);
         game.removeItem(addedText, textType);
     }
 

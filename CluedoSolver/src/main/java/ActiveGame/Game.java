@@ -53,7 +53,7 @@ public class Game {
                 break;
 
             case "Players":
-                players.removeIf(player -> player.getName().equals("item"));
+                players.removeIf(player -> player.getName().equals(item));
                 break;
         }
     }
