@@ -3,6 +3,9 @@ package Scenes;
 import ActiveGame.Game;
 import ActiveGame.Player;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableIntegerValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -38,24 +41,25 @@ public class GameWindow extends VBox {
 
         solutionView = createSolutionView();
 
-        MenuButton playerSelectButton = selectPlayerViewButtonCreator(game.getPlayers());
+        VBox playerSelectBox = selectPlayerViewButtonCreator(game.getPlayers());
         playerSolutionView = createPlayerSolutionView();
 
-        HBox middleBox = new HBox(solutionView, playerSelectButton, playerSolutionView);
+        HBox middleBox = new HBox(solutionView, playerSelectBox, playerSolutionView);
         middleBox.setPadding(new Insets(50));
         middleBox.setSpacing(25);
 
         getChildren().addAll(topOfMenu, middleBox);
     }
 
-    public MenuButton selectPlayerViewButtonCreator(ArrayList<Player> list) {
+    private VBox selectPlayerViewButtonCreator(ArrayList<Player> list) {
         MenuButton button = new MenuButton("Select player");
-
+        Text numberOfCardsInt = new Text("cards: ");
         for (Player playerObj : list) {
             String player = playerObj.getName();
 
             MenuItem item = new MenuItem(player);
             item.setOnAction((event) -> {
+                numberOfCardsInt.setText("cards: " + playerObj.getCards());
                 button.setText(player);
                 playerViewSelect = playerObj;
                 updatePlayerSolutionView();
@@ -63,7 +67,7 @@ public class GameWindow extends VBox {
             button.getItems().add(item);
         }
 
-        return button;
+        return new VBox(button, numberOfCardsInt);
     }
 
     private ListView<String> createPlayerSolutionView() {
@@ -88,12 +92,13 @@ public class GameWindow extends VBox {
                         setStyle("-fx-text-fill: yellow;");
                     } else if (game.playerDoesNotHave(item, playerViewSelect)) {
                         setStyle("-fx-text-fill: red;");
+                    } else {
+                        setStyle("-fx-text-fill: black;");
                     }
                 }
             }
         });
         returnList.setFocusTraversable(false);
-        returnList.setMouseTransparent(true);
         return returnList;
     }
 
@@ -115,12 +120,13 @@ public class GameWindow extends VBox {
                     setText(item);
                     if (game.containsFoundItem(item)) {
                         setStyle("-fx-text-fill: green;");
+                    } else {
+                        setStyle("-fx-text-fill: black;");
                     }
                 }
             }
         });
         returnList.setFocusTraversable(false);
-        returnList.setMouseTransparent(true);
         return returnList;
     }
 
@@ -180,19 +186,23 @@ public class GameWindow extends VBox {
     private void guessButtonAction() {
         Player player = game.getSelectedPlayerAnswer();
         ArrayList<String> guessList = new ArrayList<>();
-        for (String guess : guessList) {
-            if (!game.getFoundItems().contains(guess)) {
-                guessList.add(guess);
-            }
-        }
-        game.guessMade(guessList);
 
+        if (game.getSelectedWeapon() != null) guessList.add(game.getSelectedWeapon());
+        if (game.getSelectedCharacter() != null) guessList.add(game.getSelectedCharacter());
+        if (game.getSelectedRoom() != null) guessList.add(game.getSelectedRoom());
+        if (guessList.isEmpty()) return;
+
+        game.guessMade(guessList);
         updateView();
     }
 
     //fills the MenuButtons with relevant choices
     private void murderToolButtonBuilder(MenuButton button, ArrayList<String> list, String type) {
         MenuItem voidItem = new MenuItem("----");
+        voidItem.setOnAction((event) -> {
+            button.setText("----");
+            game.selectItem(null, type);
+        });
         button.getItems().add(voidItem);
 
         for (String tool : list) {
@@ -201,8 +211,10 @@ public class GameWindow extends VBox {
                 button.setText(tool);
                 if (tool.equals("----")) {
                     game.selectItem(null, type);
+                } else {
+                    game.selectItem(tool, type);
                 }
-                game.selectItem(tool, type);
+
             });
             button.getItems().add(item);
         }
@@ -276,6 +288,10 @@ public class GameWindow extends VBox {
 
     private void askButtonAction(String player, MenuButton button) {
         button.setText(player);
+        if (player.equals("----")) {
+            game.selectItem(null, "PlayersAsk");
+            return;
+        }
         game.selectItem(player, "PlayersAsk");
     }
 

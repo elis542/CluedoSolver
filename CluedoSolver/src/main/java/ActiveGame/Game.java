@@ -38,38 +38,27 @@ public class Game {
         for (Player player : players) {
             player.logicUpdate();
         }
+
+        gameWindow.updateView();
     }
 
     public void guessMade(ArrayList<String> items) {
         Player asker = selectedPlayerAsk;
-        Player answer;
-        if (selectedPlayerAnswer != null) {
-            answer = selectedPlayerAnswer;
-            answer.addGuessAnswered(items);
-        } else {
-            for (Player player : players) {
-                if (player != asker) {
-                    for (String item : items) {
-                        player.addDoesNotHave(item);
-                    }
-                }
-            }
-            return;
-        }
+        Player answer = (selectedPlayerAnswer != null) ? selectedPlayerAnswer : selectedPlayerAsk;
+        answer.addGuessAnswered(items);
 
         int diff = players.indexOf(asker) + 1;
         while (players.get(diff) != answer) {
-            if (players.get(diff) == null) {
-                diff = 0;
-                continue;
-            }
+            System.out.println("Iterating over: " + players.get(diff).getName());
             for (String item : items) {
                 players.get(diff).addDoesNotHave(item);
+                logicUpdate();
             }
             diff++;
+            if (players.size() <= diff) {
+                diff = 0;
+            }
         }
-
-        logicUpdate();
     }
 
     public void addItem(String item, String type) {

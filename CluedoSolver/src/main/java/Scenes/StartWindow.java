@@ -11,13 +11,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class StartWindow extends HBox {
-    Game game;
+    private Game game;
+    private boolean testScriptOn = true;
 
     public StartWindow(double width, double height, Game game) {
+        this.game = game;
         setWidth(width);
         setHeight(height);
         initializeWindow();
-        this.game = game;
     }
 
     private void initializeWindow() {
@@ -34,6 +35,7 @@ public class StartWindow extends HBox {
         vBoxInitializer("Players", playerVBox);
 
         getChildren().addAll(weaponVBox, characterVBox, roomVBox, playerVBox);
+
     }
 
     private void vBoxInitializer(String textType, VBox inputBox) {
@@ -80,6 +82,10 @@ public class StartWindow extends HBox {
             vBoxInitializerPlayerAddon(inputBox);
         } else {
             inputBox.getChildren().addAll(addedText, addButton, selectedItems, removeButton);
+        }
+
+        if (testScriptOn) {
+            testScript(listItems, selectedItems, textType);
         }
     }
 
@@ -138,5 +144,25 @@ public class StartWindow extends HBox {
 
     private void startButtonAction() {
         StageController.getStage().setScene(new Scene(new GameWindow(getWidth(), getHeight(), game), getWidth(), getHeight()));
+    }
+
+    private void testScript(ObservableList<String> listItems, ListView<String> selectedItems, String textType) {
+        if (textType.equals("Players")) {
+            addButtonActionPlayer(textType, textType + "1", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "2", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "3", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "4", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "5", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "6", listItems, selectedItems, 3);
+            addButtonActionPlayer(textType, textType + "7", listItems, selectedItems, 3);
+        } else {
+            addButtonAction(textType, textType + "1", listItems, selectedItems);
+            addButtonAction(textType, textType + "2", listItems, selectedItems);
+            addButtonAction(textType, textType + "3", listItems, selectedItems);
+            addButtonAction(textType, textType + "4", listItems, selectedItems);
+            addButtonAction(textType, textType + "5", listItems, selectedItems);
+            addButtonAction(textType, textType + "6", listItems, selectedItems);
+            addButtonAction(textType, textType + "7", listItems, selectedItems);
+        }
     }
 }

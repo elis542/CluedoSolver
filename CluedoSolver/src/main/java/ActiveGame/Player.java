@@ -1,13 +1,14 @@
 package ActiveGame;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Player {
     private final String name;
     private final int numOfCards;
 
     private final ArrayList<String> doesNotHaveList = new ArrayList<String>();
-    private final ArrayList<String> doesHaveList = new ArrayList<>();
+    private final HashSet<String> doesHaveList = new HashSet<>();
     private final ArrayList<ArrayList<String>> guessesAnswered = new ArrayList<>();
 
     public Player(String name, int cards) {
@@ -27,14 +28,13 @@ public class Player {
     public void addDoeshave(String item) {
         if (item == null) { return; }
         doesHaveList.add(item);
-        for (ArrayList<String> totalList : guessesAnswered) {
-            if (totalList.contains(item)) {
-                guessesAnswered.remove(totalList);
-            }
-        }
+        guessesAnswered.removeIf(totalList -> totalList.contains(item));
     }
 
     public void addDoesNotHave(String item) {
+        if (doesHaveList.contains(item)) {
+            return;
+        }
         doesNotHaveList.add(item);
         for (ArrayList<String> totalList : guessesAnswered) {
             totalList.remove(item);
@@ -48,13 +48,14 @@ public class Player {
             return;
         }
         guessesAnswered.add(guess);
+        logicUpdate();
     }
 
     public String getName() {
         return name;
     }
 
-    public ArrayList<String> getDoesHaveList() {
+    public HashSet<String> getDoesHaveList() {
         return doesHaveList;
     }
 
@@ -68,5 +69,9 @@ public class Player {
                 allItems.addAll(totalList);
         }
         return allItems;
+    }
+
+    public int getCards() {
+        return numOfCards;
     }
 }
