@@ -6,9 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -35,10 +33,7 @@ public class StartWindow extends HBox {
         VBox playerVBox = new VBox();
         vBoxInitializer("Players", playerVBox);
 
-        getChildren().add(weaponVBox);
-        getChildren().add(characterVBox);
-        getChildren().add(roomVBox);
-        getChildren().add(playerVBox);
+        getChildren().addAll(weaponVBox, characterVBox, roomVBox, playerVBox);
     }
 
     private void vBoxInitializer(String textType, VBox inputBox) {
@@ -53,51 +48,78 @@ public class StartWindow extends HBox {
         selectedItems.setMaxHeight(275);
 
         Button addButton = new Button("add");
-        addButton.setOnAction((action) -> {
-            addButtonAction(textType, addedText.getText(), listItems, selectedItems);
-            addedText.setText("");
-        });
+            addButton.setOnAction((action) -> {
+                addButtonAction(textType, addedText.getText(), listItems, selectedItems);
+                addedText.setText("");
+            });
 
         Button removeButton = new Button("remove");
         removeButton.setOnAction((action) -> {
             removeButtonAction(textType, selectedItems.getSelectionModel().getSelectedItem(), listItems, selectedItems);
         });
 
-        inputBox.getChildren().addAll(addedText, addButton, selectedItems, removeButton);
-
-        //If it's the last row we want to add more buttons. Should probably be its own VBox...
         if (textType.equals("Players")) {
-            HBox loadAndSave = new HBox();
-            loadAndSave.setSpacing(5);
+            MenuButton cardNum = new MenuButton();
+            cardNum.setText("cards");
 
-            Button loadButton = new Button("Load");
-            loadButton.setOnAction((event) -> {
-                loadButtonAction();
-            });
-            loadButton.setDisable(true); //TODO: REMOVE WHEN FEATURE WORKING
+            for (int x = 1; x < 11; x++) {
+                String num = String.valueOf(x);
+                MenuItem item = new MenuItem(num);
+                item.setOnAction((event) -> {
+                    cardNum.setText(num);
+                });
+                cardNum.getItems().add(item);
+            }
 
-            Button saveButton = new Button("Save");
-            saveButton.setOnAction((event) -> {
-                saveButtonAction();
-            });
-            saveButton.setDisable(true); //TODO: REMOVE WHEN FEATURE IS WORKING
-
-            loadAndSave.getChildren().addAll(loadButton, saveButton);
-
-            Button startButton = new Button("start");
-            startButton.setOnAction((event) -> {
-                startButtonAction();
+            addButton.setOnAction((event) -> {
+                addButtonActionPlayer(textType, addedText.getText(), listItems, selectedItems, Integer.parseInt(cardNum.getText()));
+                addedText.setText("");
             });
 
-            inputBox.getChildren().add(loadAndSave); //TODO: Make this into a addAll
-            inputBox.getChildren().add(startButton);
+            inputBox.getChildren().addAll(addedText, cardNum, addButton, selectedItems, removeButton);
+            vBoxInitializerPlayerAddon(inputBox);
+        } else {
+            inputBox.getChildren().addAll(addedText, addButton, selectedItems, removeButton);
         }
+    }
+
+    private void vBoxInitializerPlayerAddon(VBox inputBox) {
+        HBox loadAndSave = new HBox();
+        loadAndSave.setSpacing(5);
+
+        Button loadButton = new Button("Load");
+        loadButton.setOnAction((event) -> {
+            loadButtonAction();
+        });
+        loadButton.setDisable(true); //TODO: REMOVE WHEN FEATURE WORKING
+
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction((event) -> {
+            saveButtonAction();
+        });
+        saveButton.setDisable(true); //TODO: REMOVE WHEN FEATURE IS WORKING
+
+        loadAndSave.getChildren().addAll(loadButton, saveButton);
+
+        Button startButton = new Button("start");
+        startButton.setOnAction((event) -> {
+            startButtonAction();
+        });
+
+        inputBox.getChildren().add(loadAndSave); //TODO: Make this into a addAll
+        inputBox.getChildren().add(startButton);
     }
 
     private void addButtonAction(String textType, String addedText, ObservableList<String> listItems, ListView<String> displayList) {
         listItems.add(addedText);
         displayList.setItems(listItems);
         game.addItem(addedText, textType);
+    }
+
+    private void addButtonActionPlayer(String textType, String addedText, ObservableList<String> listItems, ListView<String> displayList, int cards) {
+        listItems.add(addedText);
+        displayList.setItems(listItems);
+        game.addItem(addedText, cards);
     }
 
     private void removeButtonAction(String textType, String addedText, ObservableList<String> listItems, ListView<String> displayList) {

@@ -16,18 +16,16 @@ import java.util.List;
 
 
 public class GameWindow extends VBox {
-    Game game;
-    ListView<String> solutionView;
+    private Game game;
+    private ListView<String> solutionView;
+    private ListView<String> playerSolutionView;
+    private Player playerViewSelect = null;
 
     public GameWindow(double width, double height, Game game) {
         setWidth(width);
         setHeight(height);
         this.game = game;
-        solutionView = createSolutionView();
         game.setGameWindow(this);
-
-        //TODO: REMOVE THIS
-        game.addFoundItem("kniv");
 
         initializeWindow();
     }
@@ -38,11 +36,65 @@ public class GameWindow extends VBox {
         HBox topOfMenu = new HBox(playerAskAndAnswer, murderToolSelect);
         topOfMenu.setSpacing(65);
 
-        //TODO: add selected player view to middlebox
-        HBox middleBox = new HBox(solutionView);
+        solutionView = createSolutionView();
+
+        MenuButton playerSelectButton = selectPlayerViewButtonCreator(game.getPlayers());
+        playerSolutionView = createPlayerSolutionView();
+
+        HBox middleBox = new HBox(solutionView, playerSelectButton, playerSolutionView);
         middleBox.setPadding(new Insets(50));
+        middleBox.setSpacing(25);
 
         getChildren().addAll(topOfMenu, middleBox);
+    }
+
+    public MenuButton selectPlayerViewButtonCreator(ArrayList<Player> list) {
+        MenuButton button = new MenuButton("Select player");
+
+        for (Player playerObj : list) {
+            String player = playerObj.getName();
+
+            MenuItem item = new MenuItem(player);
+            item.setOnAction((event) -> {
+                button.setText(player);
+                playerViewSelect = playerObj;
+                updatePlayerSolutionView();
+            });
+            button.getItems().add(item);
+        }
+
+        return button;
+    }
+
+    private ListView<String> createPlayerSolutionView() {
+        ListView<String> returnList = new ListView<>();
+        returnList.getItems().addAll(game.getWeapons());
+        returnList.getItems().addAll(game.getCharacters());
+        returnList.getItems().addAll(game.getRooms());
+
+        returnList.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null || playerViewSelect == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if (game.playerHas(item, playerViewSelect)) {
+                        setStyle("-fx-text-fill: green;");
+                    } else if (game.playerMaybeHas(item, playerViewSelect)) {
+                        setStyle("-fx-text-fill: yellow;");
+                    } else if (game.playerDoesNotHave(item, playerViewSelect)) {
+                        setStyle("-fx-text-fill: red;");
+                    }
+                }
+            }
+        });
+        returnList.setFocusTraversable(false);
+        returnList.setMouseTransparent(true);
+        return returnList;
     }
 
     private ListView<String> createSolutionView() {
@@ -67,6 +119,8 @@ public class GameWindow extends VBox {
                 }
             }
         });
+        returnList.setFocusTraversable(false);
+        returnList.setMouseTransparent(true);
         return returnList;
     }
 
@@ -91,23 +145,63 @@ public class GameWindow extends VBox {
         VBox characterBox = new VBox(characterText, characterButton);
         VBox roomBox = new VBox(roomText, roomButton);
 
-        //TODO: This button needs a .setOnAction
-        Button guessButton = new Button("Guess");
-        guessButton.setMinWidth(100);
-        VBox guessBox = new VBox(guessButton);
-        guessBox.setPadding(new Insets(13));
+        VBox buttonBox = createGuessKnowBox();
 
-        HBox returnBox = new HBox(weaponBox, characterBox, roomBox, guessBox);
+        HBox returnBox = new HBox(weaponBox, characterBox, roomBox, buttonBox);
         returnBox.setSpacing(35);
         return returnBox;
     }
 
+    private VBox createGuessKnowBox() {
+        Button guessButton = new Button("Guess");
+        guessButton.setOnAction((event) -> {
+            guessButtonAction();
+        });
+        guessButton.setMinWidth(100);
+
+        Button knowButton = new Button("Know");
+        knowButton.setOnAction((event) -> {
+            Player player = game.getSelectedPlayerAsk();
+            player.addDoeshave(game.getSelectedWeapon());
+            player.addDoeshave(game.getSelectedCharacter());
+            player.addDoeshave(game.getSelectedRoom());
+
+            game.logicUpdate();
+            updateView();
+        });
+        knowButton.setMinWidth(100);
+
+        VBox guessBox = new VBox(guessButton, knowButton);
+        guessBox.setPadding(new Insets(13));
+        guessBox.setSpacing(10);
+        return guessBox;
+    }
+
+    private void guessButtonAction() {
+        Player player = game.getSelectedPlayerAnswer();
+        ArrayList<String> guessList = new ArrayList<>();
+        for (String guess : guessList) {
+            if (!game.getFoundItems().contains(guess)) {
+                guessList.add(guess);
+            }
+        }
+        game.guessMade(guessList);
+
+        updateView();
+    }
+
     //fills the MenuButtons with relevant choices
     private void murderToolButtonBuilder(MenuButton button, ArrayList<String> list, String type) {
+        MenuItem voidItem = new MenuItem("----");
+        button.getItems().add(voidItem);
+
         for (String tool : list) {
             MenuItem item = new MenuItem(tool);
             item.setOnAction((event) -> {
                 button.setText(tool);
+                if (tool.equals("----")) {
+                    game.selectItem(null, type);
+                }
                 game.selectItem(tool, type);
             });
             button.getItems().add(item);
@@ -118,7 +212,7 @@ public class GameWindow extends VBox {
         VBox returnBox = new VBox();
         ArrayList<Player> players = game.getPlayers();
 
-        Text askText = new Text("Asks");
+        Text askText = new Text("Asks/Has");
         Text answerText = new Text("Answers");
 
         MenuButton askButton = new MenuButton("Asks");
@@ -195,7 +289,16 @@ public class GameWindow extends VBox {
         button.setMinWidth(size);
     }
 
+    public void updateView() {
+        solutionView.refresh();
+        playerSolutionView.refresh();
+    }
+
     public void updateSolutionView() {
         solutionView.refresh();
+    }
+    
+    public void updatePlayerSolutionView() {
+        playerSolutionView.refresh();
     }
 }

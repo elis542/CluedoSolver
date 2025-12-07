@@ -3,13 +3,14 @@ package ActiveGame;
 import Scenes.GameWindow;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Game {
     ArrayList<String> weapons = new ArrayList<>();
     ArrayList<String> characters = new ArrayList<>();
     ArrayList<String> rooms = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
-    ArrayList<String> foundItems = new ArrayList<>();
+    HashSet<String> foundItems = new HashSet<>();
 
     private Player selectedPlayerAsk;
     private Player selectedPlayerAnswer;
@@ -21,6 +22,54 @@ public class Game {
 
     public Game() {
 
+    }
+
+    public void logicUpdate() {
+        for (Player player : players) {
+            foundItems.addAll(player.getDoesHaveList());
+        }
+
+        for (Player player : players) {
+            for (String item : foundItems) {
+                player.addDoesNotHave(item);
+            }
+        }
+
+        for (Player player : players) {
+            player.logicUpdate();
+        }
+    }
+
+    public void guessMade(ArrayList<String> items) {
+        Player asker = selectedPlayerAsk;
+        Player answer;
+        if (selectedPlayerAnswer != null) {
+            answer = selectedPlayerAnswer;
+            answer.addGuessAnswered(items);
+        } else {
+            for (Player player : players) {
+                if (player != asker) {
+                    for (String item : items) {
+                        player.addDoesNotHave(item);
+                    }
+                }
+            }
+            return;
+        }
+
+        int diff = players.indexOf(asker) + 1;
+        while (players.get(diff) != answer) {
+            if (players.get(diff) == null) {
+                diff = 0;
+                continue;
+            }
+            for (String item : items) {
+                players.get(diff).addDoesNotHave(item);
+            }
+            diff++;
+        }
+
+        logicUpdate();
     }
 
     public void addItem(String item, String type) {
@@ -38,9 +87,13 @@ public class Game {
                     break;
 
                 case "Players":
-                    players.add(new Player(item));
+                    System.err.println("Use addItem(String, int) constructor for player");
                     break;
         }
+    }
+
+    public void addItem(String name, int cards) {
+        players.add(new Player(name, cards));
     }
 
     public void removeItem(String item, String type) {
@@ -104,6 +157,22 @@ public class Game {
         return foundItems.contains(s);
     }
 
+    public boolean playerHas(String item, Player player) {
+        return player.getDoesHaveList().contains(item);
+    }
+
+    public boolean playerDoesNotHave(String item, Player player) {
+        return player.getDoesNotHaveList().contains(item);
+    }
+
+    public boolean playerMaybeHas(String item, Player player) {
+        return player.getGuessesAnswered().contains(item);
+    }
+
+    public HashSet<String> getFoundItems() {
+        return foundItems;
+    }
+
     public ArrayList<String> getCharacters() {
         return characters;
     }
@@ -126,6 +195,18 @@ public class Game {
 
     public Player getSelectedPlayerAnswer() {
         return selectedPlayerAnswer;
+    }
+
+    public String getSelectedWeapon() {
+        return selectedWeapon;
+    }
+
+    public String getSelectedCharacter() {
+        return selectedCharacter;
+    }
+
+    public String getSelectedRoom() {
+        return selectedRoom;
     }
 
     public void setGameWindow(GameWindow window) { gameWindow = window; }
