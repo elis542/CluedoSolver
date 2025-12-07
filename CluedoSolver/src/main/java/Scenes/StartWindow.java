@@ -74,13 +74,13 @@ public class StartWindow extends HBox {
             loadButton.setOnAction((event) -> {
                 loadButtonAction();
             });
-            loadButton.setDisable(true); //REMOVE WHEN FEATURE WORKING
+            loadButton.setDisable(true); //TODO: REMOVE WHEN FEATURE WORKING
 
             Button saveButton = new Button("Save");
             saveButton.setOnAction((event) -> {
                 saveButtonAction();
             });
-            saveButton.setDisable(true); //REMOVE WHEN FEATURE IS WORKING
+            saveButton.setDisable(true); //TODO: REMOVE WHEN FEATURE IS WORKING
 
             loadAndSave.getChildren().addAll(loadButton, saveButton);
 
@@ -89,7 +89,7 @@ public class StartWindow extends HBox {
                 startButtonAction();
             });
 
-            inputBox.getChildren().add(loadAndSave); //Make this into a addAll
+            inputBox.getChildren().add(loadAndSave); //TODO: Make this into a addAll
             inputBox.getChildren().add(startButton);
         }
     }

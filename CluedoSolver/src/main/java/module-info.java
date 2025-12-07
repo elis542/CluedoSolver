@@ -8,6 +8,7 @@ module cluedo.solver.cluedosolver {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires javafx.base;
 
     opens cluedo.solver.cluedosolver to javafx.fxml;
     exports cluedo.solver.cluedosolver;

@@ -1,5 +1,7 @@
 package ActiveGame;
 
+import Scenes.GameWindow;
+
 import java.util.ArrayList;
 
 public class Game {
@@ -7,12 +9,15 @@ public class Game {
     ArrayList<String> characters = new ArrayList<>();
     ArrayList<String> rooms = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
+    ArrayList<String> foundItems = new ArrayList<>();
 
     private Player selectedPlayerAsk;
     private Player selectedPlayerAnswer;
     private String selectedCharacter;
     private String selectedRoom;
     private String selectedWeapon;
+
+    GameWindow gameWindow;
 
     public Game() {
 
@@ -90,6 +95,15 @@ public class Game {
         }
     }
 
+    public void addFoundItem(String s) {
+        foundItems.add(s);
+        gameWindow.updateSolutionView();
+    }
+
+    public boolean containsFoundItem(String s) {
+        return foundItems.contains(s);
+    }
+
     public ArrayList<String> getCharacters() {
         return characters;
     }
@@ -113,4 +127,6 @@ public class Game {
     public Player getSelectedPlayerAnswer() {
         return selectedPlayerAnswer;
     }
+
+    public void setGameWindow(GameWindow window) { gameWindow = window; }
 }

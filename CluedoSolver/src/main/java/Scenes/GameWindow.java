@@ -2,24 +2,32 @@ package Scenes;
 
 import ActiveGame.Game;
 import ActiveGame.Player;
-import javafx.event.ActionEvent;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.zip.ZipEntry;
+import java.util.List;
+
 
 public class GameWindow extends VBox {
     Game game;
+    ListView<String> solutionView;
 
     public GameWindow(double width, double height, Game game) {
         setWidth(width);
         setHeight(height);
         this.game = game;
+        solutionView = createSolutionView();
+        game.setGameWindow(this);
+
+        //TODO: REMOVE THIS
+        game.addFoundItem("kniv");
 
         initializeWindow();
     }
@@ -30,7 +38,36 @@ public class GameWindow extends VBox {
         HBox topOfMenu = new HBox(playerAskAndAnswer, murderToolSelect);
         topOfMenu.setSpacing(65);
 
-        getChildren().add(topOfMenu);
+        //TODO: add selected player view to middlebox
+        HBox middleBox = new HBox(solutionView);
+        middleBox.setPadding(new Insets(50));
+
+        getChildren().addAll(topOfMenu, middleBox);
+    }
+
+    private ListView<String> createSolutionView() {
+        ListView<String> returnList = new ListView<>();
+        returnList.getItems().addAll(game.getWeapons());
+        returnList.getItems().addAll(game.getCharacters());
+        returnList.getItems().addAll(game.getRooms());
+
+        returnList.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if (game.containsFoundItem(item)) {
+                        setStyle("-fx-text-fill: green;");
+                    }
+                }
+            }
+        });
+        return returnList;
     }
 
     private HBox createMurderToolSelect() {
@@ -46,7 +83,21 @@ public class GameWindow extends VBox {
         murderToolButtonBuilder(characterButton, game.getCharacters(), "Character");
         murderToolButtonBuilder(roomButton, game.getRooms(), "Room");
 
-        HBox returnBox = new HBox(weaponButton, characterButton, roomButton);
+        Text weaponText = new Text("Weapon");
+        Text characterText = new Text("Character");
+        Text roomText = new Text("Room");
+
+        VBox weaponBox = new VBox(weaponText, weaponButton);
+        VBox characterBox = new VBox(characterText, characterButton);
+        VBox roomBox = new VBox(roomText, roomButton);
+
+        //TODO: This button needs a .setOnAction
+        Button guessButton = new Button("Guess");
+        guessButton.setMinWidth(100);
+        VBox guessBox = new VBox(guessButton);
+        guessBox.setPadding(new Insets(13));
+
+        HBox returnBox = new HBox(weaponBox, characterBox, roomBox, guessBox);
         returnBox.setSpacing(35);
         return returnBox;
     }
@@ -142,5 +193,9 @@ public class GameWindow extends VBox {
     private void setButtonWidth(MenuButton button, double size) {
         button.setMaxWidth(size);
         button.setMinWidth(size);
+    }
+
+    public void updateSolutionView() {
+        solutionView.refresh();
     }
 }
