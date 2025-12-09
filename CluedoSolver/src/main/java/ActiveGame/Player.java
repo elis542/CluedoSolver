@@ -7,9 +7,11 @@ public class Player {
     private final String name;
     private final int numOfCards;
 
-    private final ArrayList<String> doesNotHaveList = new ArrayList<String>();
     private final HashSet<String> doesHaveList = new HashSet<>();
+    private final ArrayList<String> doesNotHaveList = new ArrayList<String>();
     private final ArrayList<ArrayList<String>> guessesAnswered = new ArrayList<>();
+    private final ArrayList<String> cardsNoAnswer = new ArrayList<>();
+
 
     public Player(String name, int cards) {
         this.name = name;
@@ -49,6 +51,10 @@ public class Player {
         }
         guessesAnswered.add(guess);
         logicUpdate();
+    }
+
+    public void addCardsNoAnswer(ArrayList<String> cards) {
+        cardsNoAnswer.addAll(cards);
     }
 
     public String getName() {

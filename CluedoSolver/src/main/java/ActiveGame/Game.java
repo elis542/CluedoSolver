@@ -6,19 +6,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Game {
-    ArrayList<String> weapons = new ArrayList<>();
-    ArrayList<String> characters = new ArrayList<>();
-    ArrayList<String> rooms = new ArrayList<>();
-    ArrayList<Player> players = new ArrayList<>();
-    HashSet<String> foundItems = new HashSet<>();
+    private ArrayList<String> weapons = new ArrayList<>();
+    private ArrayList<String> characters = new ArrayList<>();
+    private ArrayList<String> rooms = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
+    private HashSet<String> foundItems = new HashSet<>();
 
+    //These variables should be moved to GameWindow as they are more relevant there
     private Player selectedPlayerAsk;
     private Player selectedPlayerAnswer;
     private String selectedCharacter;
     private String selectedRoom;
     private String selectedWeapon;
 
-    GameWindow gameWindow;
+    private GameWindow gameWindow;
 
     public Game() {
 
@@ -42,13 +43,24 @@ public class Game {
         gameWindow.updateView();
     }
 
+
+    //TODO: Here I should also make sure the outcome is possible or if there has to have been a miss-input / player who lied.
     public void guessMade(ArrayList<String> items) {
         Player asker = selectedPlayerAsk;
-        Player answer = (selectedPlayerAnswer != null) ? selectedPlayerAnswer : selectedPlayerAsk;
-        answer.addGuessAnswered(items);
+        Player answer;
+
+        if (selectedPlayerAnswer != null) {
+            answer = selectedPlayerAnswer;
+            answer.addGuessAnswered(items);
+        } else {
+            answer = selectedPlayerAsk;
+
+            //TODO: this could work more logically, ex. we know that they either 1. Have the cards or 2. The cards are right
+        }
 
         int diff = players.indexOf(asker) + 1;
         while (players.get(diff) != answer) {
+            //TODO: Remove this when program is finished, should not print
             System.out.println("Iterating over: " + players.get(diff).getName());
             for (String item : items) {
                 players.get(diff).addDoesNotHave(item);
@@ -78,6 +90,9 @@ public class Game {
                 case "Players":
                     System.err.println("Use addItem(String, int) constructor for player");
                     break;
+
+                default:
+                    System.err.println("Incorrect use of addItem(), switch failed");
         }
     }
 
