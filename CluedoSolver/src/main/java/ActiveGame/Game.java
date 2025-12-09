@@ -11,6 +11,7 @@ public class Game {
     private ArrayList<String> rooms = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private HashSet<String> foundItems = new HashSet<>();
+    private HashSet<String> rightItems = new HashSet<>();
 
     //These variables should be moved to GameWindow as they are more relevant there
     private Player selectedPlayerAsk;
@@ -96,8 +97,12 @@ public class Game {
         }
     }
 
+    public void addRightItem(String card) {
+        rightItems.add(card);
+    }
+
     public void addItem(String name, int cards) {
-        players.add(new Player(name, cards));
+        players.add(new Player(name, cards, this));
     }
 
     public void removeItem(String item, String type) {
@@ -159,6 +164,10 @@ public class Game {
 
     public boolean containsFoundItem(String s) {
         return foundItems.contains(s);
+    }
+
+    public boolean containsRightItem(String s) {
+        return rightItems.contains(s);
     }
 
     public boolean playerHas(String item, Player player) {

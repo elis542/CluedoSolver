@@ -6,6 +6,7 @@ import java.util.HashSet;
 public class Player {
     private final String name;
     private final int numOfCards;
+    private final Game game;
 
     private final HashSet<String> doesHaveList = new HashSet<>();
     private final ArrayList<String> doesNotHaveList = new ArrayList<String>();
@@ -13,9 +14,10 @@ public class Player {
     private final ArrayList<String> cardsNoAnswer = new ArrayList<>();
 
 
-    public Player(String name, int cards) {
+    public Player(String name, int cards, Game game) {
         this.name = name;
         numOfCards = cards;
+        this.game = game;
     }
 
     public void logicUpdate() {
@@ -25,6 +27,12 @@ public class Player {
             }
         }
         guessesAnswered.removeIf(list -> list.isEmpty());
+
+        if (doesHaveList.size() == numOfCards && !cardsNoAnswer.isEmpty()) {
+            for (String card : cardsNoAnswer) {
+                game.addRightItem(card);
+            }
+        }
     }
 
     public void addDoeshave(String item) {

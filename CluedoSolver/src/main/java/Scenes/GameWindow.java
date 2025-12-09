@@ -116,9 +116,12 @@ public class GameWindow extends VBox {
                 if (empty || item == null) {
                     setText(null);
                     setStyle("");
+
                 } else {
                     setText(item);
                     if (game.containsFoundItem(item)) {
+                        setStyle("-fx-text-fill: red;");
+                    } else if (game.containsRightItem(item)) {
                         setStyle("-fx-text-fill: green;");
                     } else {
                         setStyle("-fx-text-fill: black;");
