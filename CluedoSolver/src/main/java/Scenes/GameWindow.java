@@ -3,26 +3,35 @@ package Scenes;
 import ActiveGame.Game;
 import ActiveGame.Player;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableIntegerValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+
+//TODO: Add error text, so you can display errors when something that is not possible happens [DONE]
+/*        Examples of impossible stuff:
+    1. Someone answering on a question when we know that someone else has all the cards they asked for
+    2. You making a guess and not selecting one of each weapon, character, room
+    3. Someone not answering a question when they should have one of the cards
+    4. Also add errors to the appropriate functions
+ */
 
 public class GameWindow extends VBox {
-    private Game game;
+    private final Game game;
     private ListView<String> solutionView;
     private ListView<String> playerSolutionView;
     private Player playerViewSelect = null;
+
+    private Text errorText;
 
     public GameWindow(double width, double height, Game game) {
         setWidth(width);
@@ -40,7 +49,6 @@ public class GameWindow extends VBox {
         topOfMenu.setSpacing(65);
 
         solutionView = createSolutionView();
-
         VBox playerSelectBox = selectPlayerViewButtonCreator(game.getPlayers());
         playerSolutionView = createPlayerSolutionView();
 
@@ -48,7 +56,13 @@ public class GameWindow extends VBox {
         middleBox.setPadding(new Insets(50));
         middleBox.setSpacing(25);
 
-        getChildren().addAll(topOfMenu, middleBox);
+        errorText = new Text();
+        HBox errorMessage = new HBox(errorText); //TODO: fix this
+        errorMessage.setMaxHeight(50);
+        errorMessage.setMinHeight(50);
+        errorMessage.setPadding(new Insets(0, 0, 0, 25));
+
+        getChildren().addAll(topOfMenu, middleBox, errorMessage);
     }
 
     private VBox selectPlayerViewButtonCreator(ArrayList<Player> list) {
@@ -187,7 +201,6 @@ public class GameWindow extends VBox {
     }
 
     private void guessButtonAction() {
-        Player player = game.getSelectedPlayerAnswer();
         ArrayList<String> guessList = new ArrayList<>();
 
         if (game.getSelectedWeapon() != null) guessList.add(game.getSelectedWeapon());
@@ -306,6 +319,18 @@ public class GameWindow extends VBox {
     private void setButtonWidth(MenuButton button, double size) {
         button.setMaxWidth(size);
         button.setMinWidth(size);
+    }
+
+    public void sendError(String error) {
+        errorText.setFill(Color.RED);
+        errorText.setText(error);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                errorText.setText("");
+            }
+        }, 6500);
     }
 
     public void updateView() {

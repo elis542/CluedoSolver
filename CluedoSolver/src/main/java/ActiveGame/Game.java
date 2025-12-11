@@ -55,8 +55,7 @@ public class Game {
             answer.addGuessAnswered(items);
         } else {
             answer = selectedPlayerAsk;
-
-            //TODO: this could work more logically, ex. we know that they either 1. Have the cards or 2. The cards are right
+            answer.addCardsNoAnswer(items);
         }
 
         int diff = players.indexOf(asker) + 1;

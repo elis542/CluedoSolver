@@ -53,6 +53,8 @@ public class Player {
 
     public void addGuessAnswered(ArrayList<String> guess) {
         guess.removeIf(item -> doesNotHaveList.contains(item));
+        guess.removeIf(item -> game.getFoundItems().contains(item));
+
         if (guess.size() == 1) {
             addDoeshave(guess.getFirst());
             return;
