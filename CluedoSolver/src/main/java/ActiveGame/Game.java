@@ -44,21 +44,19 @@ public class Game {
         gameWindow.updateView();
     }
 
-
+        //TODO: ConcurrentModificationException on row 65!!! [MAYBE DONE]
     //TODO: Here I should also make sure the outcome is possible or if there has to have been a miss-input / player who lied.
     public void guessMade(ArrayList<String> items) {
         Player asker = selectedPlayerAsk;
-        Player answer;
+        Player answer = (selectedPlayerAnswer == null) ? selectedPlayerAsk : selectedPlayerAnswer;
 
         if (selectedPlayerAnswer != null) {
-            answer = selectedPlayerAnswer;
             answer.addGuessAnswered(items);
         } else {
-            answer = selectedPlayerAsk;
             answer.addCardsNoAnswer(items);
         }
 
-        int diff = players.indexOf(asker) + 1;
+        int diff = (players.size() - 1 == players.indexOf(asker)) ? 0 : players.indexOf(asker) + 1;
         while (players.get(diff) != answer) {
             //TODO: Remove this when program is finished, should not print
             System.out.println("Iterating over: " + players.get(diff).getName());
@@ -66,10 +64,7 @@ public class Game {
                 players.get(diff).addDoesNotHave(item);
                 logicUpdate();
             }
-            diff++;
-            if (players.size() <= diff) {
-                diff = 0;
-            }
+            diff = (diff + 1) % players.size();
         }
     }
 

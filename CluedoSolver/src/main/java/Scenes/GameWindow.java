@@ -206,7 +206,7 @@ public class GameWindow extends VBox {
         if (game.getSelectedWeapon() != null) guessList.add(game.getSelectedWeapon());
         if (game.getSelectedCharacter() != null) guessList.add(game.getSelectedCharacter());
         if (game.getSelectedRoom() != null) guessList.add(game.getSelectedRoom());
-        if (guessList.isEmpty()) return;
+        if (guessList.size() != 3) return;
 
         game.guessMade(guessList);
         updateView();

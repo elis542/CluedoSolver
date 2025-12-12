@@ -42,12 +42,13 @@ public class Player {
     }
 
     public void addDoesNotHave(String item) {
-        if (doesHaveList.contains(item)) {
+        if (doesHaveList.contains(item) || doesNotHaveList.contains(item)) {
             return;
         }
+
         doesNotHaveList.add(item);
         for (ArrayList<String> totalList : guessesAnswered) {
-            totalList.remove(item);
+            totalList.removeIf(i -> i.equals(item));
         }
     }
 
